@@ -98,15 +98,15 @@ void loop() {
         redSpots();
         delay(15000); //TIME DELAY FOR DEMO ONLY
   //  }
- //   else{ 
+ //   else{
       //in between thresholds, enter mapping state
         STATE = 1;
         Serial.println("enter mapping state");
         //SET COLOR MANUALLY FOR TESTS
         setGroupColor(0, PIXNUM, strip3.Color(255, 0, 0, 0));
         showAll();
-      
-        for(int i=0; i<30; i++){ //FOR LOOP ONLY DURING DEMO 
+
+        for(int i=0; i<30; i++){ //FOR LOOP ONLY DURING DEMO
         mapping(); //will set color to freq and white to levels
         delay(200);
         }
@@ -129,8 +129,8 @@ void mapping(){
   //1-map colors to freq //COMMENTED OUT CUZ THIS LIBRARY CRASHES ARDUINO
   //float freq = meter1.getFrequency();
   //freq = (freq + meter2.getFrequency())/2;
-  
-  currentColor = mapColorFreq(freq, currentColor);  
+
+  currentColor = mapColorFreq(freq, currentColor);
   // MANUALLY CHANGE FREQ TO AVOID USING CRASHY LIBRARY FOR DEMO
   if (freq>=1000){
     freq = 0;
@@ -138,7 +138,7 @@ void mapping(){
   freq = freq + 200;
   }
 
-  //2-map white to levels, each mic controls 2 strips 
+  //2-map white to levels, each mic controls 2 strips
   Serial.println("set 1/2");
   int level1 = getMicLevel(mic1);
   mapWhiteLevels(level1, &strip1, &strip2);
@@ -182,7 +182,7 @@ void beaconGlow(){
     i=i-3;
     delay(10);
   }
-  
+
     Serial.println("beacon done");
 }
 
@@ -216,7 +216,7 @@ void redSpots(){
     if(redDelay>redDecrease){
       redDelay=(redDelay-redDecrease);
     }
-  }  
+  }
 }
 
 //HELPER METHODS------------------------------------------------
@@ -224,17 +224,17 @@ long getSonar(int trigPin, int echoPin) {
   long duration, distance;
 
  // do{
-   //send pulse to sensor 
-    digitalWrite(trigPin, LOW);  
-    delayMicroseconds(2); 
+   //send pulse to sensor
+    digitalWrite(trigPin, LOW);
+    delayMicroseconds(2);
     digitalWrite(trigPin, HIGH);
-    delayMicroseconds(10); 
+    delayMicroseconds(10);
     digitalWrite(trigPin, LOW);
    //check echo of sensor
     duration = pulseIn(echoPin, HIGH);
     distance = (duration/2) *0.0343;
  // }while(distance<=0 || distance>400);
-  
+
   /*if (distance >= 200 || distance <= 0){
     Serial.println("Sonar Out of range");
   }
@@ -269,7 +269,7 @@ int getMicLevel(int mic) {
       }
    }
 
-   //sample collection over, now analyze peaks  
+   //sample collection over, now analyze peaks
    peakToPeak = signalMax - signalMin;  // max - min = peak-peak amplitude
    //double volts = (peakToPeak * 3.3) / 1024;  // convert to volts
 
@@ -350,8 +350,8 @@ void mapWhiteLevels(int val, Adafruit_NeoPixel *meter1, Adafruit_NeoPixel *meter
 
  Serial.println(String("level will set white to: ") + maxLED);
  //set white level according to sound level
- 
- //we assume all strips have same color on all the strip from freq mapping, 
+
+ //we assume all strips have same color on all the strip from freq mapping,
  //so get color from any pixel, and mask white over it so it doesnt change color.
  uint32_t colorToMask = strip1.getPixelColor(10);
  uint8_t b = (uint8_t)colorToMask;
@@ -360,7 +360,7 @@ void mapWhiteLevels(int val, Adafruit_NeoPixel *meter1, Adafruit_NeoPixel *meter
  Serial.print(String(" from color: (")+ r +String(", ")+ g +String(", ")+ b +String(", 0)"));
  colorToMask = (maxLED << 24) | colorToMask;
  Serial.println(String(" --> ")+colorToMask);
- 
+
  setAllStrip(colorToMask, meter1);
  setAllStrip(colorToMask, meter2);
  showAll();
@@ -380,7 +380,7 @@ void mapWhiteLevels(int val, Adafruit_NeoPixel *meter1, Adafruit_NeoPixel *meter
   }
   delay(levelDelay);
  }
- 
+
 }
 
 void setAllStrip(uint32_t c, Adafruit_NeoPixel *meter) {
@@ -397,20 +397,20 @@ uint32_t mapColorFreq(float f, uint32_t color1){
   //pick color based on freq
   if(f<100){
     //low freq
-    color2=yellow;
-    Cname="yellow";
+    color2=purple;
+    Cname="purple";
   }
   else if( f<300){
-    color2=teal;
-    Cname="teal";
-  }
-  else if( f<500){
     color2=babyBlue;
     Cname="babyblue";
   }
+  else if( f<500){
+    color2=teal;
+    Cname="teal";
+  }
   else if( f<700){
-    color2=purple;
-    Cname="purple";
+    color2=yellow;
+    Cname="yellow";
   }
   else if( f<900){
     color2=strip1.Color(200, 0, 0);
@@ -431,7 +431,7 @@ void Fade(uint32_t color1, uint32_t color2, uint16_t steps){
      uint8_t blue;
      Serial.println("fading..");
      for(int i=0; i<steps; i++){
-        //get individual 3 components from colors, divide the difference in number of steps and increment 
+        //get individual 3 components from colors, divide the difference in number of steps and increment
         red = ((((uint8_t)(color1 >> 16)) * (steps - i)) + ((uint8_t)(color2 >> 16)) * i) / steps;
         green = ((((uint8_t)(color1 >>  8)) * (steps - i)) + ((uint8_t)(color2 >>  8)) * i) / steps;
         blue = (((uint8_t)color1 * (steps - i)) + ((uint8_t)color2 * i)) / steps;
@@ -445,6 +445,6 @@ void Fade(uint32_t color1, uint32_t color2, uint16_t steps){
         delay(20);
         }
      }
-        
+
 }
 
