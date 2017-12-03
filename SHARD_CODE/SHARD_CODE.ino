@@ -401,12 +401,12 @@ uint32_t mapColorFreq(float f, uint32_t color1){
     Cname="purple";
   }
   else if( f<300){
-    color2=babyBlue;
-    Cname="babyblue";
-  }
-  else if( f<500){
     color2=teal;
     Cname="teal";
+  }
+  else if( f<500){
+    color2=babyBlue;
+    Cname="babyblue";
   }
   else if( f<700){
     color2=yellow;
