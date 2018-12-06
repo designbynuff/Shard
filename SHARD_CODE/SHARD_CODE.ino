@@ -21,9 +21,9 @@ int redDecrease=200;      //decrease step to get spots faster
 int levelDelay = 50;      //time to fade out in white level mapping
 int beaconCount=0;
 long LOWTHRESH = 10 ;
-long HIGHTHRESH = 200;
+long HIGHTHRESH = 80;     //reducing this because indoor space
 int QUIETTHRESH=32;
-int LOUDTHRESH=95;
+int LOUDTHRESH=99;
 int STATE = 0;    //3 total states: 0 = above threshold, glowing white beacon
                   //                1 = between 2 thresholds, mapping to levels and freq
                   //                2 = below threshold, red spots
@@ -31,10 +31,10 @@ int redCounter=0;           //keep track of how long environment is too active
 int freq = 50;              //FAKE VALUE TO TEST
 int COLORSTEP = 50;         // number of steps to fade from one color to another
 int WHITESTEP= 10;          //multiple within steps of color fade to stop and check white levels
-int COLORHOLD=1000;         //delay to hold color before moving on
+int COLORHOLD=10;         //delay to hold color before moving on
 
 //gloable variables
-const int sampleWindow = 150; // Sample window width in mS (50 mS = 20Hz)
+const int sampleWindow = 10; // Sample window width in mS (changing from 150 to 10 to see what happens mS = 20Hz)
 unsigned int sample;
 unsigned int sample2;
 long distance1;
@@ -52,14 +52,14 @@ uint32_t babyBlue = strip1.Color(50, 40, 255, 0);
 uint32_t teal = strip1.Color(0, 230, 60, 0);
 uint32_t green = strip1.Color(0,75,15,0);
 uint32_t yellow = strip1.Color(250, 150, 10, 0);
-uint32_t currentColor=fuscia; //starting color for maping
+uint32_t currentColor=fuscia; //starting color for mapping
 
 
 //--------------------------------------------------------------
 void setup() {
   Serial.begin (115200);
   Serial.println("Start!");
-  
+
   //sensor pins
   pinMode(trigPin1, OUTPUT);
   pinMode(echoPin1, INPUT);
@@ -77,7 +77,7 @@ void setup() {
 
   Serial.println("Setup complete.");
  // meter.setBandwidth(70.00, 1500);    // Ignore frequency out of this range
-  //meter.begin(A4, 45000);      
+  //meter.begin(A4, 45000);
 
 }
 
@@ -89,20 +89,20 @@ void loop() {
   distance2 = getSonar(trigPin2, echoPin2);
   int level1=getMicLevel(mic1);
   int level2=getMicLevel(mic2);
-  
+
   if((level1>LOUDTHRESH || level2>LOUDTHRESH) && (distance1<LOWTHRESH || distance2<LOWTHRESH)){
   //TOO close, ENTER RED SPOTS STATE
     Serial.println("Enter red state");
     redSpots();
     //delay(10000); //TIME DELAY FOR DEMO ONLY
   }
-  else if((distance1 < 330 && distance1 > 40) || (distance2 < 700 && distance2 > 40)|| level1>QUIETTHRESH || level2>QUIETTHRESH){ 
-  
+  else if((distance1 < 330 && distance1 > 40) || (distance2 < 700 && distance2 > 40)|| level1>QUIETTHRESH || level2>QUIETTHRESH){
+
     //in between thresholds, enter mapping state
-      STATE = 1;       
+      STATE = 1;
       Serial.println("enter mapping state");
-   
-      //for(int i=0; i<10; i++){ //FOR LOOP ONLY DURING DEMO 
+
+      //for(int i=0; i<10; i++){ //FOR LOOP ONLY DURING DEMO
       mapping(); //will set color to freq and white to levels
      // delay(50);
      // }
@@ -128,11 +128,11 @@ void loop() {
 //STATE METHOD DECLARATIONS ------------------------------------------
 void mapping(){
   Serial.println("inside mapping");
-  
+
   //1-map colors to mic1 //COMMENTED OUT CUZ THIS LIBRARY CRASHES ARDUINO
-  currentColor = mapColorLevel(getMicLevel(mic1), currentColor);  
-delay(500);
-  //2-map white to levels, each mic controls 2 strips 
+  currentColor = mapColorLevel(getMicLevel(mic1), currentColor);
+delay(10);
+  //2-map white to levels, each mic controls 2 strips
   //Serial.println("set whites again");
   //mapWhiteLevels(getMicLevel(mic2), &strip1, &strip2);
   //mapWhiteLevels(getMicLevel(mic2), &strip3, &strip4);
@@ -179,7 +179,7 @@ void beaconGlow(){
     i=i-3;
     delay(10);
   }
-  
+
     Serial.println("beacon done");
     //return 0;
 }
@@ -214,7 +214,7 @@ void redSpots(){
     if(redDelay>redDecrease){
       redDelay=(redDelay-redDecrease);
     }
-  }  
+  }
 }
 
 //HELPER METHODS------------------------------------------------
@@ -222,17 +222,17 @@ long getSonar(int trigPin, int echoPin) {
   long duration, distance;
 
  // do{
-   //send pulse to sensor 
-    digitalWrite(trigPin, LOW);  
-    delayMicroseconds(2); 
+   //send pulse to sensor
+    digitalWrite(trigPin, LOW);
+    delayMicroseconds(2);
     digitalWrite(trigPin, HIGH);
-    delayMicroseconds(10); 
+    delayMicroseconds(10);
     digitalWrite(trigPin, LOW);
    //check echo of sensor
     duration = pulseIn(echoPin, HIGH);
     distance = (duration/2) *0.0343;
  // }while(distance<=0 || distance>400);
-  
+
   /*if (distance >= 200 || distance <= 0){
     Serial.println("Sonar Out of range");
   }
@@ -268,12 +268,12 @@ int getMicLevel(int mic) {
       }
    }
 
-   //sample collection over, now analyze peaks  
+   //sample collection over, now analyze peaks
    peakToPeak = signalMax - signalMin;  // max - min = peak-peak amplitude
    //double volts = (peakToPeak * 3.3) / 1024;  // convert to volts
 
    Serial.println(mic + String(" :   ")+ peakToPeak + String("v"));
-   delay(100);
+   delay(10);
    return peakToPeak;
 }
 
@@ -350,8 +350,8 @@ void mapWhiteLevels(int val, Adafruit_NeoPixel *meter1, Adafruit_NeoPixel *meter
 
 // Serial.println(String("level will set white to: ") + maxLED);
  //set white level according to sound level
- 
- //we assume all strips have same color on all the strip from freq mapping, 
+
+ //we assume all strips have same color on all the strip from freq mapping,
  //so get color from any pixel, and mask white over it so it doesnt change color.
  uint32_t colorToMask = strip1.getPixelColor(10);
  uint8_t b = (uint8_t)colorToMask;
@@ -360,7 +360,7 @@ void mapWhiteLevels(int val, Adafruit_NeoPixel *meter1, Adafruit_NeoPixel *meter
  //Serial.print(String(" from color: (")+ r +String(", ")+ g +String(", ")+ b +String(", 0)"));
  colorToMask = (maxLED << 24) | colorToMask;
 // Serial.println(String(" --> ")+colorToMask);
- 
+
  setAllStrip(colorToMask, meter1);
  setAllStrip(colorToMask, meter2);
  showAll();
@@ -379,7 +379,7 @@ void mapWhiteLevels(int val, Adafruit_NeoPixel *meter1, Adafruit_NeoPixel *meter
   }
   delay(levelDelay);
  }
- 
+
 }
 
 void setAllStrip(uint32_t c, Adafruit_NeoPixel *meter) {
@@ -421,7 +421,7 @@ uint32_t mapColorLevel(int f, uint32_t color1){
     Cname="yellow";
   }
 
-  
+
   Serial.println("Chosen color is: " + Cname);
   Fade(color1, color2, COLORSTEP);
   Serial.println("wait...");
@@ -436,7 +436,7 @@ void Fade(uint32_t color1, uint32_t color2, uint16_t steps){
      uint8_t blue;
      Serial.println("fading..");
      for(int i=0; i<steps; i++){
-        //get individual 3 components from colors, divide the difference in number of steps and increment 
+        //get individual 3 components from colors, divide the difference in number of steps and increment
         red = ((((uint8_t)(color1 >> 16)) * (steps - i)) + ((uint8_t)(color2 >> 16)) * i) / steps;
         green = ((((uint8_t)(color1 >>  8)) * (steps - i)) + ((uint8_t)(color2 >>  8)) * i) / steps;
         blue = (((uint8_t)color1 * (steps - i)) + ((uint8_t)color2 * i)) / steps;
@@ -449,9 +449,9 @@ void Fade(uint32_t color1, uint32_t color2, uint16_t steps){
           mapWhiteLevels(getMicLevel(mic2), &strip1, &strip2);
           mapWhiteLevels(getMicLevel(mic2), &strip3, &strip4);
         }else{
-        delay(20);
+        delay(10);
         }
      }
-        
+
 }
 
