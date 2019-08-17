@@ -24,7 +24,7 @@ long LOWTHRESH = 10 ;
 long HIGHTHRESH = 200;
 int QUIETTHRESH=32;
 int LOUDTHRESH=95;
-int STATE = 0;    //3 total states: 0 = above threshold, glowing white beacon
+int STATE = 1;    //3 total states: 0 = above threshold, glowing white beacon
                   //                1 = between 2 thresholds, mapping to levels and freq
                   //                2 = below threshold, red spots
 int redCounter=0;           //keep track of how long environment is too active
@@ -90,6 +90,15 @@ void loop() {
   int level1=getMicLevel(mic1);
   int level2=getMicLevel(mic2);
 
+  // if((level1>LOUDTHRESH || level2>LOUDTHRESH) && (distance1<LOWTHRESH || distance2<LOWTHRESH)){
+  // //TOO close, ENTER RED SPOTS STATE
+  //   Serial.println("Enter red state");
+  //   redSpots();
+  //   //delay(10000); //TIME DELAY FOR DEMO ONLY
+  // }
+  // else if((distance1 < 330 && distance1 > 40) || (distance2 < 700 && distance2 > 40)|| level1>QUIETTHRESH || level2>QUIETTHRESH){
+  //
+  //   //in between thresholds, enter mapping state
       STATE = 1;
       Serial.println("enter mapping state");
 
@@ -100,13 +109,113 @@ void loop() {
     }
     //}
  // }
-
+    // else {
+    // //not close enough, enter zero state
+    // //TODO: change this to audio thresh
+    //  STATE = 0;
+    //  if(beaconCount>5){
+    //   Serial.println("enter zero state");
+    //   beaconCount=0;
+    //   beaconGlow();
+    //  }
+    //  else{
+    //   beaconCount=beaconCount+1;
+    //   Serial.println(String("Beacon count: ")+beaconCount);
+    //  }
+  }
+}
 
 //STATE METHOD DECLARATIONS ------------------------------------------
 void mapping(){
   Serial.println("inside mapping");
 
+  //1-map colors to mic1 //COMMENTED OUT CUZ THIS LIBRARY CRASHES ARDUINO
+  currentColor = mapColorLevel(getMicLevel(mic1), currentColor);
+delay(0);
+  //2-map white to levels, each mic controls 2 strips
+  //Serial.println("set whites again");
+  //mapWhiteLevels(getMicLevel(mic2), &strip1, &strip2);
+  //mapWhiteLevels(getMicLevel(mic2), &strip3, &strip4);
 }
+
+// void beaconGlow(){
+//   Serial.println("in beacon glow");
+//   //TODO: how to get second wave going?
+//   for(int i=0; i<PIXNUM; i++){
+//     strip1.setPixelColor(i, strip1.Color(0, 0, 0, 110));
+//     strip2.setPixelColor(i, strip1.Color(0, 0, 0, 110));
+//     strip3.setPixelColor(i, strip1.Color(0, 0, 0, 110));
+//     strip4.setPixelColor(i, strip1.Color(0, 0, 0, 110));
+//
+//     //add fading trail
+//     if((i>5) && i<(PIXNUM-4)){
+//       //Serial.print(i +String(", "));
+//       setWhiteLag(i, &strip1);
+//       setWhiteLag(i, &strip2);
+//       setWhiteLag(i, &strip3);
+//       setWhiteLag(i, &strip4);
+//     }
+//     showAll();
+//     /*if( (i%WHITESTEP)==0 ){
+//       if(getMicLevel(mic1)>QUIETTHRESH && getMicLevel(mic2)>QUIETTHRESH){
+//         allOff();
+//         return ;
+//       }
+//     }else{*/
+//     delay(beaconDelay);
+//     //}
+//   }
+//
+//   //add glow burst at the tip
+//   for(int i=110; i<200; i++){
+//     setGroupColor((PIXNUM-10), PIXNUM, strip1.Color(0,0,0,i));
+//     showAll();
+//     i=i+5;
+//     delay(10);
+//   }
+//   for(int i=200; i>=0; i--){
+//     setGroupColor((PIXNUM-10), PIXNUM, strip1.Color(0,0,0,i));
+//     showAll();
+//     i=i-3;
+//     delay(10);
+//   }
+//
+//     Serial.println("beacon done");
+//     //return 0;
+// }
+//
+// void redSpots(){
+//   Serial.println("red spots triggered");
+//   redDelay=1100;
+//   allOff();
+//   //prepare the random generator
+//   randomSeed(millis());
+//   int p=0;
+//
+//   for(int i=0; i<(int)(PIXNUM/5); i++){
+//     //strip 1
+//     p=random(PIXNUM);
+//     bleed(p, &strip1);
+//
+//     //strip2
+//     p=random(PIXNUM);
+//     bleed(p, &strip2);
+//
+//     //strip3
+//     p=random(PIXNUM);
+//     bleed(p, &strip3);
+//
+//     //strip4
+//     p=random(PIXNUM);
+//     bleed(p, &strip4);
+//     Serial.println(String("   i: ")+i+String(", out of ")+(int)(PIXNUM/5));
+//
+//     delay(redDelay);
+//     if(redDelay>redDecrease){
+//       redDelay=(redDelay-redDecrease);
+//     }
+//   }
+// }
 
 //HELPER METHODS------------------------------------------------
 long getSonar(int trigPin, int echoPin) {
