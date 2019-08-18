@@ -107,7 +107,7 @@ void loop() {
       mapping(); //will set color to freq and white to levels
      // delay(50);
      // }
-    }
+    //}
     //}
  // }
     // else {
@@ -123,7 +123,7 @@ void loop() {
     //   beaconCount=beaconCount+1;
     //   Serial.println(String("Beacon count: ")+beaconCount);
     //  }
-  }
+  //}
 }
 
 //STATE METHOD DECLARATIONS ------------------------------------------
@@ -131,11 +131,10 @@ void mapping(){
   Serial.println("inside mapping");
 
   //1-map colors to mic1 //COMMENTED OUT CUZ THIS LIBRARY CRASHES ARDUINO
-  if sensorswitch{  
+  if (sensorswitch==1){  
     currentColor = mapColorLevel(getSonar(trigPin1, echoPin1), currentColor);
     sensorswitch=0;
-  }
-  else{
+  } else{
     currentColor = mapColorLevel(getSonar(trigPin2, echoPin2), currentColor);
     sensorswitch=1;
   }
