@@ -133,9 +133,11 @@ void mapping(){
   //1-map colors to mic1 //COMMENTED OUT CUZ THIS LIBRARY CRASHES ARDUINO
   if sensorswitch{  
     currentColor = mapColorLevel(getSonar(trigPin1, echoPin1), currentColor);
+    sensorswitch=0;
   }
   else{
     currentColor = mapColorLevel(getSonar(trigPin2, echoPin2), currentColor);
+    sensorswitch=1;
   }
 delay(0);
   //2-map white to levels, each mic controls 2 strips
