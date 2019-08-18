@@ -39,6 +39,7 @@ unsigned int sample;
 unsigned int sample2;
 long distance1;
 long distance2;
+int sensorswitch = 1;
 Adafruit_NeoPixel strip1 = Adafruit_NeoPixel(PIXNUM, 2, NEO_GRBW + NEO_KHZ800);
 Adafruit_NeoPixel strip2 = Adafruit_NeoPixel(PIXNUM, 3, NEO_GRBW + NEO_KHZ800);
 Adafruit_NeoPixel strip3 = Adafruit_NeoPixel(PIXNUM, 4, NEO_GRBW + NEO_KHZ800);
@@ -130,7 +131,12 @@ void mapping(){
   Serial.println("inside mapping");
 
   //1-map colors to mic1 //COMMENTED OUT CUZ THIS LIBRARY CRASHES ARDUINO
-  currentColor = mapColorLevel(getMicLevel(mic1), currentColor);
+  if sensorswitch{  
+    currentColor = mapColorLevel(getSonar(trigPin1, echoPin1), currentColor);
+  }
+  else{
+    currentColor = mapColorLevel(getSonar(trigPin2, echoPin2), currentColor);
+  }
 delay(0);
   //2-map white to levels, each mic controls 2 strips
   //Serial.println("set whites again");
@@ -395,28 +401,28 @@ uint32_t mapColorLevel(int f, uint32_t color1){
   Serial.println("In mapColorLevel");
 
   //pick color based on level
-  if(f<(QUIETTHRESH+10)){
+  if(f<(LOWTHRESH+10)){
     //low freq
     color2=fuscia;
     Cname="fuscia";
   }
-  else if( f<35){
+  else if( f<80){
     color2=purple;
     Cname="purple";
   }
-  else if( f<45){
+  else if( f<150){
     color2=babyBlue;
     Cname="babyBlue";
   }
-  else if( f<55){
+  else if( f<250){
     color2=teal;
     Cname="teal";
   }
-  else if( f<70){
+  else if( f<400){
     color2=green;
     Cname="greaan";
   }
-  else if( f>80){
+  else if( f>600){
     color2=yellow;
     Cname="yellow";
   }
