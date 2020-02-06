@@ -131,7 +131,7 @@ void mapping(){
   Serial.println("inside mapping");
 
   //1-map colors to mic1 //COMMENTED OUT CUZ THIS LIBRARY CRASHES ARDUINO
-  if (sensorswitch==1){  
+  if (sensorswitch==1){
     currentColor = mapColorLevel(getSonar(trigPin1, echoPin1), currentColor);
     sensorswitch=0;
   } else{
@@ -421,7 +421,7 @@ uint32_t mapColorLevel(int f, uint32_t color1){
   }
   else if( f<400){
     color2=green;
-    Cname="greaan";
+    Cname="green";
   }
   else if( f>600){
     color2=yellow;
