@@ -29,9 +29,9 @@ int STATE = 1;    //3 total states: 0 = above threshold, glowing white beacon
                   //                2 = below threshold, red spots
 int redCounter=0;           //keep track of how long environment is too active
 int freq = 50;              //FAKE VALUE TO TEST
-int COLORSTEP = 50;         // number of steps to fade from one color to another (was 50)
+int COLORSTEP = 0;         // number of steps to fade from one color to another (was 50)
 int WHITESTEP= 4;          //multiple within steps of color fade to stop and check white levels (was 10)
-int COLORHOLD=10;         //delay to hold color before moving on (was 1000)
+int COLORHOLD= 0;         //delay to hold color before moving on (was 1000)
 
 //gloable variables
 const int sampleWindow = 10; // Sample window width in mS (50 mS = 20Hz) (was 150)
