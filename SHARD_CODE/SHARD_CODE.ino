@@ -18,10 +18,10 @@ int PIXNUM = 60;
 int beaconDelay = 40;     //time between for loop for beacon glow
 int redDelay=1100;        //starting delay between red spots
 int redDecrease=200;      //decrease step to get spots faster
-int levelDelay = 5;      //time to fade out in white level mapping (was 50)
+int levelDelay = 50;      //time to fade out in white level mapping (was 50)
 int beaconCount=0;
 long LOWTHRESH = 10 ;     //(was 10)
-long HIGHTHRESH = 400;  //(was 200)
+long HIGHTHRESH = 200;  //(was 200)
 int QUIETTHRESH=10; //was 32
 int LOUDTHRESH=120;  //was 95
 int STATE = 1;    //3 total states: 0 = above threshold, glowing white beacon
@@ -59,7 +59,7 @@ uint32_t coral = strip1.Color(222, 113, 130, 0);
 uint32_t indigo = strip1.Color(16, 3, 134, 0);
 uint32_t crimson = strip1.Color(237, 31, 12, 0);
 
-uint32_t currentColor=fuscia; //starting color for maping
+uint32_t currentColor=fuscia; //starting color for mapping
 
 
 //--------------------------------------------------------------
