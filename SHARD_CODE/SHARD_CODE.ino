@@ -18,23 +18,23 @@ int PIXNUM = 60;
 int beaconDelay = 40;     //time between for loop for beacon glow
 int redDelay=1100;        //starting delay between red spots
 int redDecrease=200;      //decrease step to get spots faster
-int levelDelay = 50;      //time to fade out in white level mapping
+int levelDelay = 50;      //time to fade out in white level mapping (was 50)
 int beaconCount=0;
-long LOWTHRESH = 10 ;
-long HIGHTHRESH = 200;
-int QUIETTHRESH=32;
-int LOUDTHRESH=95;
+long LOWTHRESH = 10 ;     //(was 10)
+long HIGHTHRESH = 400;  //(was 200)
+int QUIETTHRESH=10; //was 32
+int LOUDTHRESH=120;  //was 95
 int STATE = 1;    //3 total states: 0 = above threshold, glowing white beacon
                   //                1 = between 2 thresholds, mapping to levels and freq
                   //                2 = below threshold, red spots
 int redCounter=0;           //keep track of how long environment is too active
 int freq = 50;              //FAKE VALUE TO TEST
-int COLORSTEP = 50;         // number of steps to fade from one color to another
-int WHITESTEP= 10;          //multiple within steps of color fade to stop and check white levels
-int COLORHOLD=1000;         //delay to hold color before moving on
+int COLORSTEP = 50;         // number of steps to fade from one color to another (was 50)
+int WHITESTEP= 4;          //multiple within steps of color fade to stop and check white levels (was 10)
+int COLORHOLD=10;         //delay to hold color before moving on (was 1000)
 
 //gloable variables
-const int sampleWindow = 150; // Sample window width in mS (50 mS = 20Hz)
+const int sampleWindow = 150; // Sample window width in mS (50 mS = 20Hz) (was 150)
 unsigned int sample;
 unsigned int sample2;
 long distance1;
@@ -53,7 +53,13 @@ uint32_t babyBlue = strip1.Color(50, 40, 255, 0);
 uint32_t teal = strip1.Color(0, 230, 60, 0);
 uint32_t green = strip1.Color(0,75,15,0);
 uint32_t yellow = strip1.Color(250, 150, 10, 0);
-uint32_t currentColor=fuscia; //starting color for maping
+//new hues
+uint32_t orange = strip1.Color(251, 171, 105, 0);
+uint32_t coral = strip1.Color(222, 113, 130, 0);
+uint32_t indigo = strip1.Color(16, 3, 134, 0);
+uint32_t crimson = strip1.Color(237, 31, 12, 0);
+
+uint32_t currentColor=fuscia; //starting color for mapping
 
 
 //--------------------------------------------------------------
@@ -91,40 +97,6 @@ void loop() {
   int level1=getMicLevel(mic1);
   int level2=getMicLevel(mic2);
 
-  // if((level1>LOUDTHRESH || level2>LOUDTHRESH) && (distance1<LOWTHRESH || distance2<LOWTHRESH)){
-  // //TOO close, ENTER RED SPOTS STATE
-  //   Serial.println("Enter red state");
-  //   redSpots();
-  //   //delay(10000); //TIME DELAY FOR DEMO ONLY
-  // }
-  // else if((distance1 < 330 && distance1 > 40) || (distance2 < 700 && distance2 > 40)|| level1>QUIETTHRESH || level2>QUIETTHRESH){
-  //
-  //   //in between thresholds, enter mapping state
-      STATE = 1;
-      Serial.println("enter mapping state");
-
-      //for(int i=0; i<10; i++){ //FOR LOOP ONLY DURING DEMO
-      mapping(); //will set color to freq and white to levels
-     // delay(50);
-     // }
-    //}
-    //}
- // }
-    // else {
-    // //not close enough, enter zero state
-    // //TODO: change this to audio thresh
-    //  STATE = 0;
-    //  if(beaconCount>5){
-    //   Serial.println("enter zero state");
-    //   beaconCount=0;
-    //   beaconGlow();
-    //  }
-    //  else{
-    //   beaconCount=beaconCount+1;
-    //   Serial.println(String("Beacon count: ")+beaconCount);
-    //  }
-  //}
-}
 
 //STATE METHOD DECLARATIONS ------------------------------------------
 void mapping(){
@@ -407,25 +379,41 @@ uint32_t mapColorLevel(int f, uint32_t color1){
     color2=fuscia;
     Cname="fuscia";
   }
-  else if( f<80){
+  else if( f<50){
     color2=purple;
     Cname="purple";
   }
-  else if( f<150){
+  else if( f<100){
     color2=babyBlue;
     Cname="babyBlue";
   }
-  else if( f<250){
+  else if( f<150){
     color2=teal;
     Cname="teal";
   }
-  else if( f<400){
+  else if( f<200){
     color2=green;
     Cname="green";
   }
-  else if( f>600){
+  else if( f>250){
     color2=yellow;
     Cname="yellow";
+  }
+  else if( f>250){
+    color2=orange;
+    Cname="orange";
+  }
+  else if( f>250){
+    color2=coral;
+    Cname="coral";
+  }
+  else if( f>250){
+    color2=indigo;
+    Cname="indigo";
+  }
+  else if( f>250){
+    color2=crimson;
+    Cname="crimson";
   }
 
 
@@ -461,4 +449,3 @@ void Fade(uint32_t color1, uint32_t color2, uint16_t steps){
      }
 
 }
-
