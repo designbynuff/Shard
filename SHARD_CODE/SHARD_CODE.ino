@@ -18,7 +18,7 @@ int PIXNUM = 60;
 int beaconDelay = 40;     //time between for loop for beacon glow
 int redDelay=1100;        //starting delay between red spots
 int redDecrease=200;      //decrease step to get spots faster
-int levelDelay = 50;      //time to fade out in white level mapping (was 50)
+int levelDelay = 5;      //time to fade out in white level mapping (was 50)
 int beaconCount=0;
 long LOWTHRESH = 10 ;     //(was 10)
 long HIGHTHRESH = 400;  //(was 200)
@@ -34,7 +34,7 @@ int WHITESTEP= 4;          //multiple within steps of color fade to stop and che
 int COLORHOLD=10;         //delay to hold color before moving on (was 1000)
 
 //gloable variables
-const int sampleWindow = 150; // Sample window width in mS (50 mS = 20Hz) (was 150)
+const int sampleWindow = 10; // Sample window width in mS (50 mS = 20Hz) (was 150)
 unsigned int sample;
 unsigned int sample2;
 long distance1;
@@ -59,7 +59,7 @@ uint32_t coral = strip1.Color(222, 113, 130, 0);
 uint32_t indigo = strip1.Color(16, 3, 134, 0);
 uint32_t crimson = strip1.Color(237, 31, 12, 0);
 
-uint32_t currentColor=fuscia; //starting color for mapping
+uint32_t currentColor=fuscia; //starting color for maping
 
 
 //--------------------------------------------------------------
@@ -97,6 +97,40 @@ void loop() {
   int level1=getMicLevel(mic1);
   int level2=getMicLevel(mic2);
 
+  // if((level1>LOUDTHRESH || level2>LOUDTHRESH) && (distance1<LOWTHRESH || distance2<LOWTHRESH)){
+  // //TOO close, ENTER RED SPOTS STATE
+  //   Serial.println("Enter red state");
+  //   redSpots();
+  //   //delay(10000); //TIME DELAY FOR DEMO ONLY
+  // }
+  // else if((distance1 < 330 && distance1 > 40) || (distance2 < 700 && distance2 > 40)|| level1>QUIETTHRESH || level2>QUIETTHRESH){
+  //
+  //   //in between thresholds, enter mapping state
+      STATE = 1;
+      Serial.println("enter mapping state");
+
+      //for(int i=0; i<10; i++){ //FOR LOOP ONLY DURING DEMO
+      mapping(); //will set color to freq and white to levels
+     // delay(50);
+     // }
+    //}
+    //}
+ // }
+    // else {
+    // //not close enough, enter zero state
+    // //TODO: change this to audio thresh
+    //  STATE = 0;
+    //  if(beaconCount>5){
+    //   Serial.println("enter zero state");
+    //   beaconCount=0;
+    //   beaconGlow();
+    //  }
+    //  else{
+    //   beaconCount=beaconCount+1;
+    //   Serial.println(String("Beacon count: ")+beaconCount);
+    //  }
+  //}
+}
 
 //STATE METHOD DECLARATIONS ------------------------------------------
 void mapping(){
